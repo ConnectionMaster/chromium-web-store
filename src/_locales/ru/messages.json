@@ -16,6 +16,10 @@
         "message": "Исключенные расширения",
         "description": ""
     },
+    "options_importExportHeading": {
+        "message": "Импорт/Экспорт",
+        "description": ""
+    },
     "options_autoUpdate": {
         "message": "Автоматически проверять обновления расширений",
         "description": ""
@@ -44,7 +48,19 @@
         "message": "Никогда не проверять обновления для этого расширения",
         "description": ""
     },
-
+    "options_updateDelay": {
+        "message": "Проверять наличие обновлений каждые $delayInMinutes$ минут",
+        "description": "delayInMinutes - поле, содержимое которого может изменять пользователь",
+        "placeholders": {
+            "delayInMinutes": {
+                "content": "$1"
+            }
+        }
+    },
+    "options_importExportInstallAllButton": {
+        "message": "Установить все",
+        "description": ""
+    },
     "popup_checkingForUpdates": {
         "message": "Проверка обновлений...",
         "description": ""

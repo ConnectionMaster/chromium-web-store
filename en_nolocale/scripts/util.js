@@ -29,8 +29,9 @@ function promptInstall(crx_url, is_webstore, extension_dl_ids) {
         });
 }
 
-function checkForUpdates(update_callback = null, failure_callback = null, completed_callback = null) {
+function checkForUpdates(update_callback = null, failure_callback = null, completed_callback = null, custom_ext_list = []) {
     chrome.management.getAll(function (e) {
+		e.push(...custom_ext_list);
         let default_options = {
             "auto_update": true,
             "check_store_apps": true,
@@ -69,6 +70,7 @@ function checkForUpdates(update_callback = null, failure_callback = null, comple
                         'url': updateUrl,
                         'name': 'CWS Extensions'
                     });
+
                 function getNewXhr(is_webstore, ext_id) {
                     let xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function () {
@@ -81,13 +83,15 @@ function checkForUpdates(update_callback = null, failure_callback = null, comple
                                         let updatever = updateCheck.getAttribute('version');
                                         let appid = updates[i].getAttribute('appid');
                                         let updatestatus = updateCheck.getAttribute('status');
-                                        if (updatestatus == 'ok' && updatever && installed_versions[appid] !== undefined && version_is_newer(installed_versions[appid].version, updatever)) {
+                                        if ((updatestatus == 'ok' || !is_webstore) && updatever && installed_versions[appid] !== undefined && version_is_newer(installed_versions[appid].version, updatever)) {
                                             updateCount++;
                                             if (update_callback)
                                                 update_callback(updateCheck, installed_versions, appid, updatever, is_webstore);
                                             if (appid in stored_values["removed_extensions"]) {
                                                 delete stored_values['removed_extensions'][appid];
-                                                chrome.storage.sync.set({'removed_extensions': stored_values['removed_extensions']});
+                                                chrome.storage.sync.set({
+                                                    'removed_extensions': stored_values['removed_extensions']
+                                                });
                                             }
                                         }
                                         if (failure_callback && updatestatus == 'noupdate' && !(appid in stored_values["removed_extensions"]))
@@ -96,21 +100,21 @@ function checkForUpdates(update_callback = null, failure_callback = null, comple
                                 }
                                 chrome.browserAction.getBadgeText({}, function (currentText) {
                                     if (currentText != '?') {
-                                        if (!currentText) {
-                                            if (updateCount)
-                                                chrome.browserAction.setBadgeText({
-                                                    text: '' + updateCount
-                                                });
-                                        } else
-                                            chrome.browserAction.setBadgeText({
-                                                text: parseInt(updateCount) + parseInt(currentText) + ''
-                                            });
+                                        let disp = (updateCount || '') + (parseInt(currentText) || '') + '';
+                                        chrome.browserAction.setBadgeText({
+                                            text: disp
+                                        });
+                                        chrome.storage.local.set({
+                                            "badge_display": disp
+                                        });
                                     }
                                 });
                             } else {
                                 if (failure_callback) {
                                     if (is_webstore)
-                                        failure_callback(false, {'name':'CWS Extensions'});
+                                        failure_callback(false, {
+                                            'name': 'CWS Extensions'
+                                        });
                                     else
                                         failure_callback(false, installed_versions[ext_id]);
                                 }
