@@ -23,7 +23,7 @@ This extension brings the following functionality to ungoogled-chromium (and oth
 
 #### Installation
 1. Go to `chrome://flags` and search for the `#extension-mime-request-handling` flag and set it to `Always prompt for install`.
-2. Download the .crx from [Releases](https://github.com/NeverDecaf/chromium-web-store/releases/latest), you should be prompted to install the extension.
+2. Download the .crx from [Releases](https://github.com/NeverDecaf/chromium-web-store/releases/latest) ([direct link](https://github.com/NeverDecaf/chromium-web-store/releases/latest/download/Chromium.Web.Store.crx), you should be prompted to install the extension.
 
 If the above steps do not work for you, try one of the following alternative methods:
 
