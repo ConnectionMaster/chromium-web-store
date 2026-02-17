@@ -275,13 +275,13 @@ chrome.runtime.onMessageExternal.addListener(function (
                 const this_ext = exts.filter((extInfo) => extInfo.id === id);
                 if (!this_ext.length) {
                     sendResponse({ args: ["installable"] });
-                    return;
+                } else {
+                    sendResponse({
+                        args: [this_ext[0].enabled ? "enabled" : "disabled"],
+                    });
                 }
-                sendResponse({
-                    args: [this_ext[0].enabled ? "enabled" : "disabled"],
-                });
             });
-            break;
+            return true;
         case "getAll":
             var [href, ..._] = request.args;
             const target_ext = ncws_re.exec(href)?.[1];
@@ -291,7 +291,7 @@ chrome.runtime.onMessageExternal.addListener(function (
                     args: [exts.filter((extInfo) => extInfo.id === target_ext)],
                 });
             });
-            break;
+            return true;
         case "beginInstallWithManifest3":
             var [extInfo, href, ..._] = request.args;
 
@@ -307,6 +307,6 @@ chrome.runtime.onMessageExternal.addListener(function (
                 // The behaviour of this is similar to sending success ("") so this should be fine.
                 args: ["user_cancelled"],
             });
-            break;
+            return true;
     }
 });
